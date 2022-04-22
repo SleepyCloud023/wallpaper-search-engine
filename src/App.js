@@ -24,7 +24,7 @@ function App() {
     const numOfPages = data.totalHits ? Math.ceil(data.totalHits / perPage) : 0;
 
     useEffect(() => {
-        const fetch = async () => {
+        (async function () {
             const data = await getWallPapers({
                 q: query,
                 orientation: orientation,
@@ -32,9 +32,10 @@ function App() {
                 page: page,
                 per_page: perPage,
             });
-            setData(data);
-        };
-        fetch();
+            if (data) {
+                setData(data);
+            }
+        })();
     }, [query, orientation, order, page, perPage]);
 
     return (
