@@ -31,19 +31,21 @@ const DetailRow = styled.div`
     }
 `;
 
-const ImageModal = () => {
-    const { largeImageURL } = DummyData.hits[0];
+const ImageModal = ({ open, hitsElement }) => {
+    const { largeImageURL } = hitsElement;
     return (
-        <Modal>
-            <DeleteIcon width="24px" cursor="pointer" fill="#FFFFFF" />
-            <ModalImg src={largeImageURL} />
-            <p>태그,태그,태그</p>
-            <DetailRow>
-                <LikeIcon width="20px" height="20px" />
-                123명이 좋아합니다
-            </DetailRow>
-            <p>12345 조회</p>
-        </Modal>
+        open && (
+            <Modal>
+                <DeleteIcon width="24px" cursor="pointer" fill="#FFFFFF" />
+                <ModalImg src={largeImageURL} />
+                <p>태그,태그,태그</p>
+                <DetailRow>
+                    <LikeIcon width="20px" height="20px" />
+                    123명이 좋아합니다
+                </DetailRow>
+                <p>12345 조회</p>
+            </Modal>
+        )
     );
 };
 

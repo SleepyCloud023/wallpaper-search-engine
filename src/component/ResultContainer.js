@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-import { useState } from 'react';
-import DummyData from '../asset/dummyData';
+import { useEffect, useState } from 'react';
 import ImageCard from './ImageCard';
 import ImageModal from './ImageModal';
 import Pagination from './Pagination';
@@ -20,22 +19,24 @@ const ResultsWrapper = styled.div`
     width: 100%;
 `;
 
-const ResultContainer = () => {
-    const data = DummyData;
-
+const ResultContainer = ({ data }) => {
     return (
         <Container>
             {/* ImgCard 클릭 시 해당 이미지의 정보로 ImageModal이 나타나야 합니다. */}
-            {/* <ImageModal /> */}
+            {/* <ImageModal open={true} hitsElement={data.hits[0]} /> */}
             <Pagination />
             <ResultsWrapper>
-                {data.hits?.map((imgData) => (
-                    <ImageCard key={imgData.id} imgData={imgData} />
-                ))}
-                {/* 검색 결과가 없을 시 페이지네이션과 ImgCard 목록 대신 EmptyResult가 렌더되어야 합니다. */}
-                {/* <EmptyResult /> */}
+                <Result hits={data.hits} />
             </ResultsWrapper>
         </Container>
+    );
+};
+
+const Result = ({ hits }) => {
+    return hits ? (
+        hits.map((imgData) => <ImageCard key={imgData.id} imgData={imgData} />)
+    ) : (
+        <EmptyResult />
     );
 };
 
