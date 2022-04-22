@@ -67,6 +67,8 @@ const Search = ({ query, setQuery, setData }) => {
                     setData(data);
                 }
             });
+
+            setQuery((prev) => ({ ...prev, q: '' }));
         }
     };
 

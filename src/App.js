@@ -14,7 +14,7 @@ const Container = styled.div`
 `;
 
 const defaulCondition = {
-    q: 'cat',
+    q: '',
 };
 
 function App() {
