@@ -47,9 +47,34 @@ const SearchOptionButton = styled.p`
     color: #5e5e5e;
 `;
 
-const Search = ({ query, setQuery, setData }) => {
+const defaulCondition = {
+    q: '',
+};
+
+const Search = ({ setData }) => {
+    const [query, setQuery] = useState(defaulCondition);
+
     const [searchOption, setSearchOption] = useState(false);
     const [recentWordList, setRecentWordList] = useState([]);
+
+    const fetchQueryData = async () => {
+        const result = await getData(query);
+        if (result) {
+            setData(result);
+        }
+    };
+
+    const getStoredWordList = () => {
+        const storedList = JSON.parse(localStorage.getItem('recentWordList'));
+        if (storedList) {
+            setRecentWordList(storedList);
+        }
+    };
+
+    const setWordList = (state) => {
+        setRecentWordList(state);
+        localStorage.setItem('recentWordList', JSON.stringify(state));
+    };
 
     const toggleSearchOption = () => {
         setSearchOption((prev) => !prev);
@@ -61,40 +86,32 @@ const Search = ({ query, setQuery, setData }) => {
 
     const handleEnter = ({ key }) => {
         if (key === 'Enter') {
-            const { q } = query;
-            const nextWordList = [
-                ...recentWordList.filter((word) => word !== q),
-                q,
-            ];
-            setRecentWordList(nextWordList);
-            localStorage.setItem(
-                'recentWordList',
-                JSON.stringify(nextWordList)
-            );
+            fetchQueryData();
 
-            getData(query).then((data) => {
-                if (data) {
-                    setData(data);
-                }
-            });
+            const nextWordList = [
+                ...recentWordList.filter((word) => word !== query.q),
+                query.q,
+            ];
+            setWordList(nextWordList);
             setQuery((prev) => ({ ...prev, q: '' }));
         }
     };
 
-    const onDeleteIcon = (targetIndex) => (event) => {
+    const onDeleteIcon = (targetIndex) => (_event) => {
         const nextWordList = recentWordList.filter(
             (_word, index) => index !== targetIndex
         );
-        setRecentWordList(nextWordList);
-        localStorage.setItem('recentWordList', JSON.stringify(nextWordList));
+        setWordList(nextWordList);
     };
 
     useEffect(() => {
-        const storedList = JSON.parse(localStorage.getItem('recentWordList'));
+        getStoredWordList();
+        fetchQueryData();
 
-        if (storedList) {
-            setRecentWordList(storedList);
-        }
+        window.addEventListener('storage', getStoredWordList);
+        return () => {
+            window.removeEventListener('storage', getStoredWordList);
+        };
     }, []);
 
     return (

@@ -13,28 +13,13 @@ const Container = styled.div`
     min-height: 100vh;
 `;
 
-const defaulCondition = {
-    q: '',
-};
-
 function App() {
     const [data, setData] = useState({});
-    const [query, setQuery] = useState(defaulCondition);
-
-    useEffect(() => {
-        (async function () {
-            const queriedData = await getData(query);
-
-            if (queriedData) {
-                setData(queriedData);
-            }
-        })();
-    }, []);
 
     return (
         <>
             <Container>
-                <Hero query={query} setQuery={setQuery} setData={setData} />
+                <Hero setData={setData} />
                 <ResultContainer data={data} />
                 <Footer />
                 <ToggleThemeButton />
