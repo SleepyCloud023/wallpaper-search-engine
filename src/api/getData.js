@@ -15,8 +15,8 @@ async function getData(conditions) {
     const { data } = await axios.get(endUrl, {
         params: embedKey(urlEncodedCondition),
     });
+    // console.log(data);
     // TODO: 예외처리
-    console.log(data);
     return data;
 }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as SearchIcon } from '../asset/search.svg';
 import SearchTag from './SearchTag';
@@ -49,6 +49,7 @@ const SearchOptionButton = styled.p`
 
 const Search = ({ query, setQuery, setData }) => {
     const [searchOption, setSearchOption] = useState(false);
+    const [recentWordList, setRecentWordList] = useState([]);
 
     const toggleSearchOption = () => {
         setSearchOption((prev) => !prev);
@@ -60,17 +61,41 @@ const Search = ({ query, setQuery, setData }) => {
 
     const handleEnter = ({ key }) => {
         if (key === 'Enter') {
-            const queriedData = getData(query);
+            const { q } = query;
+            const nextWordList = [
+                ...recentWordList.filter((word) => word !== q),
+                q,
+            ];
+            setRecentWordList(nextWordList);
+            localStorage.setItem(
+                'recentWordList',
+                JSON.stringify(nextWordList)
+            );
 
-            queriedData.then((data) => {
+            getData(query).then((data) => {
                 if (data) {
                     setData(data);
                 }
             });
-
             setQuery((prev) => ({ ...prev, q: '' }));
         }
     };
+
+    const onDeleteIcon = (targetIndex) => (event) => {
+        const nextWordList = recentWordList.filter(
+            (_word, index) => index !== targetIndex
+        );
+        setRecentWordList(nextWordList);
+        localStorage.setItem('recentWordList', JSON.stringify(nextWordList));
+    };
+
+    useEffect(() => {
+        const storedList = JSON.parse(localStorage.getItem('recentWordList'));
+
+        if (storedList) {
+            setRecentWordList(storedList);
+        }
+    }, []);
 
     return (
         <>
@@ -90,7 +115,13 @@ const Search = ({ query, setQuery, setData }) => {
                 {searchOption && <SearchOption />}
             </SearchBoxContainer>
             <SearchTagContainer>
-                <SearchTag />
+                {recentWordList.map((recentWord, index) => (
+                    <SearchTag
+                        key={recentWord}
+                        recentWord={recentWord}
+                        onDelete={onDeleteIcon(index)}
+                    />
+                ))}
             </SearchTagContainer>
         </>
     );
