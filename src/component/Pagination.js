@@ -24,18 +24,62 @@ const PageSelect = styled.select`
     }
 `;
 
-const Pagination = () => {
+const Pagination = ({ query, setQuery, fetchQueryData }) => {
+    const maxPage = Math.floor(500 / query.per_page);
+    const pageList = Array(maxPage)
+        .fill(1)
+        .map((x, index) => x + index);
+
+    const onSelect = (event) => {
+        const selectedNumber = parseInt(event.target.value);
+
+        setQuery({ ...query, page: selectedNumber });
+        fetchQueryData({ ...query, page: selectedNumber });
+    };
+
+    const onButton = (buttonType) => {
+        let nextPage;
+        switch (buttonType) {
+            case 'prev':
+                nextPage = query.page > 1 ? query.page - 1 : 1;
+                break;
+            case 'next':
+                nextPage = query.page < maxPage ? query.page + 1 : maxPage;
+                break;
+            default:
+                break;
+        }
+        setQuery({ ...query, page: nextPage });
+        fetchQueryData({ ...query, page: nextPage });
+    };
+
     return (
         <Nav>
-            <PrevIcon width="24" cursor="pointer" fill="var(--text)" />
-            {`총 10 중 `}
-            <PageSelect name="page">
-                <option value={1} key={1}>
-                    1
-                </option>
+            {query.page > 1 && (
+                <PrevIcon
+                    width="24"
+                    cursor="pointer"
+                    fill="var(--text)"
+                    onClick={() => onButton('prev')}
+                />
+            )}
+            {`총 ${maxPage} 중 `}
+            <PageSelect name="page" value={query.page} onChange={onSelect}>
+                {pageList.map((pageNum) => (
+                    <option value={pageNum} key={pageNum}>
+                        {pageNum}
+                    </option>
+                ))}
             </PageSelect>
             페이지
-            <NextIcon width="24" cursor="pointer" fill="var(--text)" />
+            {query.page < maxPage && (
+                <NextIcon
+                    width="24"
+                    cursor="pointer"
+                    fill="var(--text)"
+                    onClick={() => onButton('next')}
+                />
+            )}
         </Nav>
     );
 };

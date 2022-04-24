@@ -19,22 +19,52 @@ const ResultsWrapper = styled.div`
     width: 100%;
 `;
 
-const ResultContainer = ({ data }) => {
+const ResultContainer = ({ data, query, setQuery, fetchQueryData }) => {
+    const [modalInfo, setmodalInfo] = useState({ open: false, index: 0 });
+
+    const onImageClick = (index) => {
+        setmodalInfo({ open: true, index });
+    };
+
+    const onDeleteIcon = () => {
+        setmodalInfo({ ...modalInfo, open: false });
+    };
+
     return (
         <Container>
             {/* ImgCard 클릭 시 해당 이미지의 정보로 ImageModal이 나타나야 합니다. */}
-            {/* <ImageModal open={true} hitsElement={data.hits[0]} /> */}
-            <Pagination />
+            {data.hits && (
+                <ImageModal
+                    open={modalInfo.open}
+                    hitsElement={data.hits[modalInfo.index]}
+                    onDeleteIcon={onDeleteIcon}
+                />
+            )}
+            <Pagination
+                query={query}
+                setQuery={setQuery}
+                fetchQueryData={fetchQueryData}
+            />
             <ResultsWrapper>
-                <Result hits={data.hits} />
+                <Result
+                    hits={data.hits}
+                    onImageClick={onImageClick}
+                    setmodalInfo={setmodalInfo}
+                />
             </ResultsWrapper>
         </Container>
     );
 };
 
-const Result = ({ hits }) => {
+const Result = ({ hits, onImageClick }) => {
     return hits ? (
-        hits.map((imgData) => <ImageCard key={imgData.id} imgData={imgData} />)
+        hits.map((imgData, index) => (
+            <ImageCard
+                key={imgData.id}
+                imgData={imgData}
+                onClick={() => onImageClick(index)}
+            />
+        ))
     ) : (
         <EmptyResult />
     );

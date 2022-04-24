@@ -5,6 +5,7 @@ import ResultContainer from './component/ResultContainer';
 import Footer from './component/Footer';
 import './App.css';
 import { useState } from 'react';
+import getData from './api/getData';
 
 const Container = styled.div`
     position: relative;
@@ -12,14 +13,39 @@ const Container = styled.div`
     min-height: 100vh;
 `;
 
+const defaulCondition = {
+    q: '',
+    orientation: 'all',
+    order: 'popular',
+    page: 1,
+    per_page: 20,
+};
+
 function App() {
     const [data, setData] = useState({});
+    const [query, setQuery] = useState(defaulCondition);
+
+    const fetchQueryData = async (condition = query) => {
+        const result = await getData(condition);
+        if (result) {
+            setData(result);
+        }
+    };
 
     return (
         <>
             <Container>
-                <Hero setData={setData} />
-                <ResultContainer data={data} />
+                <Hero
+                    query={query}
+                    setQuery={setQuery}
+                    fetchQueryData={fetchQueryData}
+                />
+                <ResultContainer
+                    data={data}
+                    query={query}
+                    setQuery={setQuery}
+                    fetchQueryData={fetchQueryData}
+                />
                 <Footer />
                 <ToggleThemeButton />
             </Container>

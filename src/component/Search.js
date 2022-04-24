@@ -47,25 +47,9 @@ const SearchOptionButton = styled.p`
     color: #5e5e5e;
 `;
 
-const defaulCondition = {
-    q: '',
-    order: 'popular',
-    orientation: 'all',
-    per_page: 20,
-};
-
-const Search = ({ setData }) => {
-    const [query, setQuery] = useState(defaulCondition);
-
+const Search = ({ query, setQuery, fetchQueryData }) => {
     const [searchOption, setSearchOption] = useState(false);
     const [recentWordList, setRecentWordList] = useState([]);
-
-    const fetchQueryData = async (condition = query) => {
-        const result = await getData(condition);
-        if (result) {
-            setData(result);
-        }
-    };
 
     const setWordList = (state) => {
         setRecentWordList(state);
@@ -109,8 +93,13 @@ const Search = ({ setData }) => {
 
     const onRadioSelect = (event) => {
         const { name, value } = event.target;
-        setQuery((prev) => ({ ...prev, [name]: value }));
-        fetchQueryData({ ...query, [name]: value });
+        const nextQuery = {
+            ...query,
+            [name]: value,
+            page: name === 'per_page' ? 1 : query.page,
+        };
+        setQuery(nextQuery);
+        fetchQueryData(nextQuery);
     };
 
     const getStoredWordList = () => {
