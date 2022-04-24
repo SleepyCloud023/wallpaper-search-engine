@@ -24,6 +24,7 @@ const defaulCondition = {
 function App() {
     const [data, setData] = useState({});
     const [query, setQuery] = useState(defaulCondition);
+    const [theme, setTheme] = useState('light');
 
     const fetchQueryData = async (condition = query) => {
         const result = await getData(condition);
@@ -34,7 +35,7 @@ function App() {
 
     return (
         <>
-            <Container>
+            <Container className={theme !== 'light' ? 'dark' : null}>
                 <Hero
                     query={query}
                     setQuery={setQuery}
@@ -47,7 +48,7 @@ function App() {
                     fetchQueryData={fetchQueryData}
                 />
                 <Footer />
-                <ToggleThemeButton />
+                <ToggleThemeButton theme={theme} setTheme={setTheme} />
             </Container>
         </>
     );

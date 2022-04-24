@@ -22,8 +22,7 @@ const Button = styled.div`
     }
 `;
 
-const ToggleThemeButton = () => {
-    const [theme, setTheme] = useState('light');
+const ToggleThemeButton = ({ theme, setTheme }) => {
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
