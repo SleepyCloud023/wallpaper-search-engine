@@ -23,9 +23,9 @@ const TagLabel = styled.span`
     }
 `;
 
-const SearchTag = ({ recentWord, onDelete }) => {
+const SearchTag = ({ recentWord, onDelete, onSelect }) => {
     return (
-        <Tag>
+        <Tag onClick={onSelect}>
             <TagLabel>{recentWord}</TagLabel>
             <DeleteIcon width="12px" onClick={onDelete} />
         </Tag>

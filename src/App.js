@@ -4,8 +4,7 @@ import Hero from './component/Hero';
 import ResultContainer from './component/ResultContainer';
 import Footer from './component/Footer';
 import './App.css';
-import { useEffect, useState } from 'react';
-import getData from './api/getData';
+import { useState } from 'react';
 
 const Container = styled.div`
     position: relative;

@@ -49,6 +49,9 @@ const SearchOptionButton = styled.p`
 
 const defaulCondition = {
     q: '',
+    order: 'popular',
+    orientation: 'all',
+    per_page: 20,
 };
 
 const Search = ({ setData }) => {
@@ -57,17 +60,10 @@ const Search = ({ setData }) => {
     const [searchOption, setSearchOption] = useState(false);
     const [recentWordList, setRecentWordList] = useState([]);
 
-    const fetchQueryData = async () => {
-        const result = await getData(query);
+    const fetchQueryData = async (condition = query) => {
+        const result = await getData(condition);
         if (result) {
             setData(result);
-        }
-    };
-
-    const getStoredWordList = () => {
-        const storedList = JSON.parse(localStorage.getItem('recentWordList'));
-        if (storedList) {
-            setRecentWordList(storedList);
         }
     };
 
@@ -97,11 +93,31 @@ const Search = ({ setData }) => {
         }
     };
 
-    const onDeleteIcon = (targetIndex) => (_event) => {
+    const onSelectIcon = (word) => (event) => {
+        setQuery((prev) => ({ ...prev, q: word }));
+        fetchQueryData({ ...query, q: word });
+    };
+
+    const onDeleteIcon = (targetIndex) => (event) => {
+        event.stopPropagation();
+
         const nextWordList = recentWordList.filter(
             (_word, index) => index !== targetIndex
         );
         setWordList(nextWordList);
+    };
+
+    const onRadioSelect = (event) => {
+        const { name, value } = event.target;
+        setQuery((prev) => ({ ...prev, [name]: value }));
+        fetchQueryData({ ...query, [name]: value });
+    };
+
+    const getStoredWordList = () => {
+        const storedList = JSON.parse(localStorage.getItem('recentWordList'));
+        if (storedList) {
+            setRecentWordList(storedList);
+        }
     };
 
     useEffect(() => {
@@ -129,7 +145,7 @@ const Search = ({ setData }) => {
                         검색 옵션 {searchOption ? '닫기' : '열기'}
                     </SearchOptionButton>
                 </SearchInputContainer>
-                {searchOption && <SearchOption />}
+                {searchOption && <SearchOption onRadioSelect={onRadioSelect} />}
             </SearchBoxContainer>
             <SearchTagContainer>
                 {recentWordList.map((recentWord, index) => (
@@ -137,6 +153,7 @@ const Search = ({ setData }) => {
                         key={recentWord}
                         recentWord={recentWord}
                         onDelete={onDeleteIcon(index)}
+                        onSelect={onSelectIcon(recentWord)}
                     />
                 ))}
             </SearchTagContainer>
