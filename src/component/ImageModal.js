@@ -32,7 +32,7 @@ const DetailRow = styled.div`
 `;
 
 const ImageModal = ({ open, hitsElement, onDeleteIcon }) => {
-    const { likes, views, largeImageURL } = hitsElement;
+    const { tags, likes, views, largeImageURL } = hitsElement;
     return (
         open && (
             <Modal>
@@ -43,7 +43,7 @@ const ImageModal = ({ open, hitsElement, onDeleteIcon }) => {
                     onClick={onDeleteIcon}
                 />
                 <ModalImg src={largeImageURL} />
-                <p>태그,태그,태그</p>
+                <p>{tags}</p>
                 <DetailRow>
                     <LikeIcon width="20px" height="20px" />
                     {likes}명이 좋아합니다
